@@ -4,18 +4,13 @@
   <modelVersion>4.0.0</modelVersion>  
   <groupId>me.legrange</groupId>  
   <artifactId>tiny-modbus</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
   <packaging>jar</packaging>  
   <dependencies>
     <dependency>
       <groupId>com.neuronrobotics</groupId>  
       <artifactId>nrjavaserial</artifactId>  
       <version>3.12.1</version>
-    </dependency>
-    <dependency>
-      <groupId>net.objecthunter</groupId>
-      <artifactId>exp4j</artifactId>
-      <version>0.4.5</version>
     </dependency>
   </dependencies>  
   <properties> 
