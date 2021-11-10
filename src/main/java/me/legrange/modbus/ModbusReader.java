@@ -1,18 +1,3 @@
-/*
- * Copyright 2016 gideon.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package me.legrange.modbus;
 
 import java.util.LinkedList;
@@ -29,9 +14,19 @@ import me.legrange.modbus.SerialModbusPort;
  * @since 1.0
  * @author Gideon le Grange https://github.com/GideonLeGrange
  */
-public class ModbusReader implements Runnable {
+public final class ModbusReader {
 
-    public ModbusReader(SerialModbusPort modbus, String name, int deviceId, boolean zeroBased) throws ModbusReaderException {
+    private boolean running;
+    private long pollInterval = 60000;
+    private String name;
+    private final int deviceId;
+    private SerialModbusPort modbus;
+    private final List<ModbusListener> listeners = new LinkedList<>();
+    private final List<ModbusRegister> registers = new LinkedList<>();
+    private List<Poll> polls = null;
+    private final boolean zeroBased;
+
+    public ModbusReader(SerialModbusPort modbus, String name, int deviceId, boolean zeroBased) {
         this.name = name;
         this.deviceId = deviceId;
         this.zeroBased = zeroBased;
@@ -52,7 +47,7 @@ public class ModbusReader implements Runnable {
     }
 
     public void start() {
-        Thread t = new Thread(this, "Modbus poller");
+        Thread t = new Thread(this::run, "Modbus poller");
         t.setDaemon(true);
         t.start();
     }
@@ -61,8 +56,7 @@ public class ModbusReader implements Runnable {
         running = false;
     }
 
-    @Override
-    public void run() {
+    private void run() {
         running = true;
         while (running) {
             long start = System.currentTimeMillis();
@@ -102,17 +96,4 @@ public class ModbusReader implements Runnable {
         return polls;
     }
 
-    private void initModbus(String port, int speed) throws ModbusException {
-        modbus = SerialModbusPort.open(port, speed);
-    }
-
-    private boolean running;
-    private long pollInterval = 60000;
-    private String name;
-    private final int deviceId;
-    private SerialModbusPort modbus;
-    private final List<ModbusListener> listeners = new LinkedList<>();
-    private final List<ModbusRegister> registers = new LinkedList<>();
-    private List<Poll> polls = null;
-    private final boolean zeroBased;
 }
