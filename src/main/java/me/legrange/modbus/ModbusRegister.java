@@ -1,6 +1,7 @@
 package me.legrange.modbus;
 
 import java.nio.ByteBuffer;
+import net.objecthunter.exp4j.Expression;
 
 /**
  *
@@ -8,7 +9,7 @@ import java.nio.ByteBuffer;
  */
 public interface ModbusRegister {
     
-    enum Type { FLOAT; }
+    enum Type { FLOAT, INT; }
     
     /**
      * Return the name of the register.
@@ -28,6 +29,12 @@ public interface ModbusRegister {
      */
     int getLength();
 
+    /** 
+     * Return the transformation to apply to the register. 
+     * @return The transformation expression. 
+     */
+    Expression getTransform();
+ 
     /** 
      * Return the register type. 
      * @return The typpe.
@@ -51,7 +58,16 @@ public interface ModbusRegister {
     }
     
     static double decodeFloat(ModbusRegister reg, byte bytes[]) {
-        return ByteBuffer.wrap(new byte[]{bytes[2], bytes[3], bytes[0], bytes[1]}).getDouble();
+        float f = ByteBuffer.wrap(new byte[]{bytes[2], bytes[3], bytes[0], bytes[1]}).getFloat();
+        return reg.getTransform().setVariable("_", f).evaluate();
+    }
+    
+    static double decodeInt(ModbusRegister reg, int words[]) {
+        long lval = 0;
+        for (int i = 0; i < words.length; ++i) {
+            lval = (lval << 8) | words[i];
+        }
+        return reg.getTransform().setVariable("_", lval).evaluate();
     }
 
 }
