@@ -12,13 +12,8 @@
       <artifactId>nrjavaserial</artifactId>  
       <version>3.12.1</version>
     </dependency>
-    <dependency>
-      <groupId>net.objecthunter</groupId>
-      <artifactId>exp4j</artifactId>
-      <version>0.4.5</version>
-    </dependency>
-  </dependencies>  
-  <properties> 
+  </dependencies>
+  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
     <maven.compiler.source>1.8</maven.compiler.source>  
     <maven.compiler.target>1.8</maven.compiler.target> 
